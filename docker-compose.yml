@@ -290,10 +290,13 @@ services:
   firefox:
     container_name: firefox
     image: jlesage/firefox
+    restart: unless-stopped
+    network_mode: bridge
     ports:
       - 5800:5800
     volumes:
       - ${DOCKERCONFDIR}/firefox:/config:rw  
+ #Dashy     
   dashy:
     # To build from source, replace 'image: lissy93/dashy' with 'build: .'
     # build: .
