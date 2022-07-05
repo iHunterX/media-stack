@@ -1,0 +1,360 @@
+version: "3.2"
+services:
+# Radarr - https://hotio.dev/containers/radarr/
+# mkdir /volume2/docker/appdata/radarr
+  radarr:
+    container_name: radarr
+    image: cr.hotio.dev/hotio/radarr:latest
+    restart: unless-stopped
+    network_mode: bridge
+    logging:
+      driver: json-file
+      options:
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}
+    ports:
+      - 7878:7878
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK=002
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/radarr:/config
+      - ${DOCKERSTORAGEDIR}:/data
+
+# Sonarr - https://hotio.dev/containers/sonarr/
+# mkdir /volume2/docker/appdata/sonarr
+  sonarr:
+    container_name: sonarr
+    image: cr.hotio.dev/hotio/sonarr:latest
+    restart: unless-stopped
+    network_mode: bridge
+    logging:
+      driver: json-file
+      options:
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}
+    ports:
+      - 8989:8989
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK=002
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/sonarr:/config
+      - ${DOCKERSTORAGEDIR}:/data
+
+# Bazarr - https://hotio.dev/containers/bazarr/
+# mkdir /volume2/docker/appdata/bazarr
+  bazarr:
+    container_name: bazarr
+    image: cr.hotio.dev/hotio/bazarr:release
+    restart: unless-stopped
+    network_mode: bridge
+    logging:
+      driver: json-file
+      options:
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}
+    ports:
+      - 6767:6767
+    environment:
+      - PUID=1027
+      - PGID=100
+      - TZ=${TZ}
+      - UMASK=002
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/bazarr:/config
+      - ${DOCKERSTORAGEDIR}/media:/data/media
+
+# Prowlarr - https://hotio.dev/containers/prowlarr/
+# mkdir /volume2/docker/appdata/prowlarr
+  prowlarr:
+    container_name: prowlarr
+    image: cr.hotio.dev/hotio/prowlarr:nightly
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - "9696:9696"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK=002
+    volumes:
+      - ${DOCKERCONFDIR}/prowlarr:/config # Change "/volume2/docker/appdata/prowlarr" with the path your config will be. 
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}      
+
+# notifiarr - https://hub.docker.com/r/golift/notifiarr/
+# <mkdir /volume1/docker/appdata/notifiarr>
+# It is important that a static hostname is set so the site can keep track of multiple clients for the settings
+  notifiarr:
+    container_name: notifiarr
+    hostname: notifiarr
+    image: golift/notifiarr:latest
+    network_mode: bridge
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
+    ports:
+      - 5454:5454
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${DOCKERCONFDIR}/notifiarr:/config
+      - /var/run/utmp:/var/run/utmp          # optional, only needed if you want to count users
+    privileged: true                         # Optional, only needed for Snapshots
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}     
+
+# autobrr - https://hotio.dev/containers/autobrr/
+# mkdir /volume2/docker/appdata/autobrr
+  autobrr:
+    container_name: autobrr
+    image: ghcr.io/autobrr/autobrr:latest
+    network_mode: bridge
+    restart: unless-stopped
+    logging:
+     driver: json-file
+     options:
+       max-file: ${DOCKERLOGGING_MAXFILE}
+       max-size: ${DOCKERLOGGING_MAXSIZE}
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}        
+    volumes:
+      # - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/autobrr:/config
+    ports:
+      - 7474:7474
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}     
+
+# Overseerr - https://hotio.dev/containers/overseerr/
+# mkdir /volume2/docker/appdata/overseerr
+  overseerr:
+    container_name: overseerr
+    image: cr.hotio.dev/hotio/overseerr
+    restart: unless-stopped
+    network_mode: bridge
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}
+    ports:
+      - "5055:5055"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK=002
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/overseerr:/config
+# Deluge - https://docs.linuxserver.io/images/docker-deluge
+# mkdir /volume2/docker/appdata/deluge
+  deluge:
+    container_name: deluge
+    image: ghcr.io/linuxserver/deluge
+    restart: unless-stopped
+    network_mode: bridge
+    logging:
+      driver: json-file
+    ports:
+      - 51414:51413
+      - 51414:51413/udp
+      - 53394:53394
+      - 63394-63404:63394-63404
+      - 58846:58846
+      - 58946:58946
+      - 6882:6881
+      - 6882:6881/udp
+      - 8112:8112
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - DOCKER_MODS=ghcr.io/gilbn/theme.park:deluge
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/deluge:/config # Change "/volume2/docker/appdata/deluge" with the path your config will be.
+      - ${DOCKERSTORAGEDIR}/torrents:/data/torrents # Change "/volume2/data/torrents" with the path your torrent data ends up in.
+
+
+# Plex - https://hotio.dev/containers/plex/
+# mkdir -p /volume2/docker/appdata/plex
+# Also please read the extra info => https://trash-guides.info/Hardlinks/How-to-setup-for/Synology/#appdata
+  plex:
+    container_name: plex
+    image: cr.hotio.dev/hotio/plex
+    restart: unless-stopped
+    network_mode: bridge
+    logging:
+      driver: json-file
+      options:
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}
+    ports:
+      - 32400:32400
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK=002
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - ADVERTISE_IP=${PLEX_ADVERTISE_IP}
+      # - ALLOWED_NETWORKS=
+      - PLEX_PASS=${PLEX_PASS}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/plex:/config:rw
+      - ${DOCKERSTORAGEDIR}/media:/data/media:rw
+      # - ${DOCKERSTORAGEDIR}/transcode:/transcode:rw
+    devices:                                        # optional: if you have a Syno with an Intel CPU with quicksync and want hardware transcoding (only with Plex Pass)
+      - /dev/dri:/dev/dri                           # optional: if you have a Syno with an Intel CPU with quicksync and want hardware transcoding (only with Plex Pass)
+# PlexMeta - https://github.com/linuxserver/docker-plex-meta-manager
+# mkdir -p /volume2/docker/appdata/pmm
+  plex-meta-manager:
+    image: lscr.io/linuxserver/plex-meta-manager:latest
+    container_name: plex-meta-manager
+    network_mode: bridge
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - PMM_CONFIG=/config/config.yml #optional
+      # - PMM_TIME=03:00 #optional
+      # - PMM_RUN=False #optional
+      # - PMM_TEST=False #optional
+      # - PMM_NO_MISSING=False #optional
+    volumes:
+      - ${DOCKERCONFDIR}/pmm:/config
+    restart: unless-stopped
+# Tautulli - https://hotio.dev/containers/tautulli/
+# mkdir /volume2/docker/appdata/tautulli
+  tautulli:
+    container_name: tautulli
+    image: ghcr.io/hotio/tautulli
+    restart: unless-stopped
+    network_mode: bridge
+    logging:
+      driver: json-file
+    ports:
+      - 8181:8181
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK=002
+      # - ARGS=
+      - DEBUG=no
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/tautulli:/config:rw # Change "/docker/appdata/plex" with the path your config will be.
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}
+  firefox:
+    container_name: firefox
+    image: jlesage/firefox
+    ports:
+      - 5800:5800
+    volumes:
+      - ${DOCKERCONFDIR}/firefox:/config:rw  
+  dashy:
+    # To build from source, replace 'image: lissy93/dashy' with 'build: .'
+    # build: .
+    image: lissy93/dashy
+    container_name: Dashy
+    network_mode: bridge
+    # Pass in your config file below, by specifying the path on your host machine
+    volumes:
+      - ${DOCKERCONFDIR}/dashy/dashy-config.yml:/app/public/conf.yml
+      - ${DOCKERCONFDIR}/dashy/icons:/app/public/item-icons/
+    ports:
+      - 4000:80
+    # Set any environmental variables
+    environment:
+      - NODE_ENV=production
+    # Specify your user ID and group ID. You can find this by running `id -u` and `id -g`
+      - UID=${PUID}
+      - GID=${PGID}
+      - TZ=${TZ}
+    # Specify restart policy
+    restart: unless-stopped
+    # Configure healthchecks
+    healthcheck:
+      test: ['CMD', 'node', '/app/services/healthcheck']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s     
+# Watchtower (automatic docker container updater) - https://github.com/containrrr/watchtower
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    network_mode: bridge
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ} #Change to your timezone
+      - UMASK=022
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_INCLUDE_STOPPED=false
+      - WATCHTOWER_MONITOR_ONLY=false
+      - WATCHTOWER_SCHEDULE=0 0 4 * * * # use cron to change update interval set at 4am.
+      - WATCHTOWER_TIMEOUT=10s
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+#Homebreidge
+  homebridge:
+    image: oznu/homebridge:latest
+    container_name: homebridge
+    restart: always
+    network_mode: host
+    volumes:
+      - /volume2/docker/homebridge:/homebridge
+    logging:
+      driver: json-file
+      options:
+        max-size: "10mb"
+        max-file: "1"
+    environment:
+      - TZ=${TZ}
