@@ -399,3 +399,22 @@ services:
       - /volume2/MediaVault/.cache:/cache
       ## Where to store generated content (screenshots,previews,transcodes,sprites)
       - /volume2/MediaVault/.generated:/generated
+  #Flood UI
+  qflood:
+    container_name: qflood
+    image: cr.hotio.dev/hotio/qflood
+    network_mode: bridge
+    restart: unless-stopped
+    ports:
+      - "8221:8080"
+      - "3030:3000"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ} #Change to your timezone
+      - UMASK=002
+      - FLOOD_AUTH=false
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/flood:/config # Change "/volume2/docker/appdata/deluge" with the path your config will be.
+      - ${DOCKERSTORAGEDIR}/torrents:/data/torrents # Change "/volume2/data/torrents" with the path your torrent data ends up in.
