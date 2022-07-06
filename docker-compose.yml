@@ -365,7 +365,7 @@ services:
   stash:
     image: stashapp/stash:latest
     container_name: stash
-    network_mode: bridge
+    network_mode: host
     restart: unless-stopped
     ## the container's port must be the same with the STASH_PORT in the environment section
     ports:
