@@ -55,6 +55,24 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${DOCKERCONFDIR}/sonarr:/config
       - ${DOCKERSTORAGEDIR}:/data
+#lidarr
+  lidarr:
+    container_name: lidarr
+    hostname: lidarr
+    restart: unless-stopped
+    network_mode: bridge
+    image: cr.hotio.dev/hotio/lidarr
+    ports:
+      - "8686:8686"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK=002
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKERCONFDIR}/lidarr:/config       
+      - ${DOCKERSTORAGEDIR}:/data      
 
 # Bazarr - https://hotio.dev/containers/bazarr/
 # mkdir /volume2/docker/appdata/bazarr
@@ -244,6 +262,34 @@ services:
       # - ${DOCKERSTORAGEDIR}/transcode:/transcode:rw
     devices:                                        # optional: if you have a Syno with an Intel CPU with quicksync and want hardware transcoding (only with Plex Pass)
       - /dev/dri:/dev/dri                           # optional: if you have a Syno with an Intel CPU with quicksync and want hardware transcoding (only with Plex Pass)
+#Jellyfin
+  jellyfin:
+    container_name: jellyfin
+    image: cr.hotio.dev/hotio/jellyfin
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
+    ports:
+      - "8096:8096"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK=002
+    volumes:
+      - ${DOCKERCONFDIR}/jellyfin:/config
+      - ${DOCKERSTORAGEDIR}/media/tv:/data/tvshows:rw
+      - ${DOCKERSTORAGEDIR}/media/movies:/data/movies:rw
+    devices:                                        # optional: if you have a Syno with an Intel CPU with quicksync and want hardware transcoding (only with Plex Pass)
+      - /dev/dri:/dev/dri    
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}     
+
 # PlexMeta - https://github.com/linuxserver/docker-plex-meta-manager
 # mkdir -p /volume2/docker/appdata/pmm
   plex-meta-manager:
