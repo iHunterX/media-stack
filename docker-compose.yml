@@ -267,6 +267,7 @@ services:
     container_name: jellyfin
     image: cr.hotio.dev/hotio/jellyfin
     restart: unless-stopped
+    network_mode: host
     logging:
       driver: json-file
       options:
