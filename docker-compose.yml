@@ -284,6 +284,7 @@ services:
       - ${DOCKERCONFDIR}/jellyfin:/config
       - ${DOCKERSTORAGEDIR}/media/tv:/data/tvshows:rw
       - ${DOCKERSTORAGEDIR}/media/movies:/data/movies:rw
+      - ${DOCKERSTORAGEDIR}/media/music:/data/musics:rw
     devices:                                        # optional: if you have a Syno with an Intel CPU with quicksync and want hardware transcoding (only with Plex Pass)
       - /dev/dri:/dev/dri    
     labels:
