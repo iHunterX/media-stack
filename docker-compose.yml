@@ -182,7 +182,7 @@ services:
     restart: unless-stopped
     network_mode: bridge
     ports:
-      - "5800:5800"
+      - "5890:5800"
     environment:
       - USER_ID=${PUID}
       - GROUP_ID=${PGID}
