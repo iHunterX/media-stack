@@ -175,6 +175,21 @@ services:
       - org.hotio.pullio.update=${PULLIO_UPDATE}
       - org.hotio.pullio.notify=${PULLIO_NOTIFY}
       - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}     
+#MediaInfo
+  mediainfo:
+    container_name: mediainfo
+    image: jlesage/mediainfo
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - "5800:5800"
+    environment:
+      - USER_ID=${PUID}
+      - GROUP_ID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - "${DOCKERSTORAGEDIR}:/storage:ro"
+      - "${DOCKERCONFDIR}/mediainfo:/config:rw"    
 
 # Overseerr - https://hotio.dev/containers/overseerr/
 # mkdir /volume2/docker/appdata/overseerr
