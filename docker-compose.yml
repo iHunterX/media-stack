@@ -483,6 +483,7 @@ services:
   unifi-controller:
     image: lscr.io/linuxserver/unifi-controller:latest
     container_name: unifi-controller
+    network_mode: host
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
