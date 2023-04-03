@@ -122,6 +122,26 @@ services:
       - org.hotio.pullio.update=${PULLIO_UPDATE}
       - org.hotio.pullio.notify=${PULLIO_NOTIFY}
       - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}      
+# Trackarr - https://hotio.dev/containers/trackarr/
+# mkdir /volume2/docker/appdata/trackarr  
+  trackarr:
+    container_name: trackarr
+    image: cr.hotio.dev/hotio/trackarr
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - "7337:7337"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK=002
+    volumes:
+      - ${DOCKERCONFDIR}/trackarr:/config
+    labels:
+      - org.hotio.pullio.update=${PULLIO_UPDATE}
+      - org.hotio.pullio.notify=${PULLIO_NOTIFY}
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}    
 
 # notifiarr - https://hub.docker.com/r/golift/notifiarr/
 # <mkdir /volume1/docker/appdata/notifiarr>
