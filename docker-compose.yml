@@ -144,7 +144,7 @@ services:
       - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}    
 
 # notifiarr - https://hub.docker.com/r/golift/notifiarr/
-# <mkdir /volume1/docker/appdata/notifiarr>
+# <mkdir /volume2/docker/appdata/notifiarr>
 # It is important that a static hostname is set so the site can keep track of multiple clients for the settings
   notifiarr:
     container_name: notifiarr
@@ -168,7 +168,38 @@ services:
     labels:
       - org.hotio.pullio.update=${PULLIO_UPDATE}
       - org.hotio.pullio.notify=${PULLIO_NOTIFY}
-      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}     
+      - org.hotio.pullio.discord.webhook=${PULLIO_DISCORD_WEBHOOK}   
+
+# tdarr - ghcr.io/haveagitgat/tdarr:latest
+# <mkdir /volume2/docker/appdata/tdarr>
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:latest
+    container_name: Tdarr
+    hostname: tdarr
+    network_mode: bridge
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8265/ || exit 1
+    ports:
+      - 8265:8265
+      - 8266:8266
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - serverIP=tdarr
+      - serverPort=8266
+      - webUIPort=8265
+      - internalNode=true
+      - nodeID=InternalNode
+    volumes:
+      - ${DOCKERCONFDIR}/tdarr/server:/app/server
+      - ${DOCKERCONFDIR}/tdarr/configs:/app/configs
+      - ${DOCKERCONFDIR}/tdarr/logs:/app/logs
+      - ${DOCKERSTORAGEDIR}/media:/media
+      - ${DOCKERCONFDIR}/tdarr/temp:/temp
+    restart: unless-stopped
 
 # autobrr - https://hotio.dev/containers/autobrr/
 # mkdir /volume2/docker/appdata/autobrr
